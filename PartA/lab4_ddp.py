@@ -521,6 +521,12 @@ def run_q4(args):
 # =========================================================================
 def main():
     p = argparse.ArgumentParser(description="ECE-GY 9143 Lab 4 Part A: Distributed Deep Learning")
+    p.add_argument(
+        "run_pos",
+        nargs="?",
+        choices=["q1", "q2", "q3", "q4"],
+        help="Experiment mode as positional arg (q1/q2/q3/q4). Useful with some torchrun versions.",
+    )
     p.add_argument("--data_path", type=str, default="./data")
     p.add_argument("--device", type=str, default="cuda", help="Device for single-GPU runs (Q1)")
     p.add_argument("--epochs", type=int, default=2, help="Number of epochs (default 2 for Q1-Q3, set 5 for Q4)")
@@ -529,19 +535,20 @@ def main():
     p.add_argument("--lr", type=float, default=0.1)
     p.add_argument("--momentum", type=float, default=0.9)
     p.add_argument("--weight_decay", type=float, default=5e-4)
-    p.add_argument("--run", type=str, default="q1",
+    p.add_argument("--run", type=str, default=None,
                    choices=["q1", "q2", "q3", "q4"],
                    help="Which experiment: q1 (single-GPU timing) | q2 (speedup) | q3 (compute vs comm) | q4 (large batch)")
 
     args = p.parse_args()
+    run_mode = args.run if args.run is not None else (args.run_pos if args.run_pos is not None else "q1")
 
-    if args.run == "q1":
+    if run_mode == "q1":
         run_q1(args)
-    elif args.run == "q2":
+    elif run_mode == "q2":
         run_q2(args)
-    elif args.run == "q3":
+    elif run_mode == "q3":
         run_q3(args)
-    elif args.run == "q4":
+    elif run_mode == "q4":
         run_q4(args)
 
 
